@@ -1,0 +1,54 @@
+{
+  "name": "food-for-thought",
+  "description": "Food blog, recipe sharing, meal planner fullstack hobby project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.12.0",
+    "@types/node": "18.15.11",
+    "@types/react": "18.0.33",
+    "@types/react-dom": "18.0.11",
+    "cookie": "^0.5.0",
+    "eslint": "8.37.0",
+    "eslint-config-next": "13.2.4",
+    "jsonwebtoken": "^9.0.0",
+    "next": "13.2.4",
+    "nodemailer": "^6.9.1",
+    "pg": "^8.10.0",
+    "prisma": "^4.12.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.0.3"
+  },
+  "keywords": [
+    "Next.js",
+    "Prisma",
+    "PostgreSQL",
+    "Food",
+    "Blog",
+    "Recipes",
+    "Meal",
+    "Planner"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anclagen/Food-Blog-Nextjs-Prisma.git"
+  },
+  "author": "Alexander Barrett",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Anclagen/Food-Blog-Nextjs-Prisma/issues"
+  },
+  "homepage": "https://github.com/Anclagen/Food-Blog-Nextjs-Prisma#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.3.1"
+  }
+}
