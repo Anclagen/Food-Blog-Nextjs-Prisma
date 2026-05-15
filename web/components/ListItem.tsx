@@ -1,0 +1,61 @@
+"use client";
+
+import Image from "next/image";
+import { ShoppingListItem, SubstitutionSetting } from "@/lib/api";
+
+const SUBSTITUTION_LABELS: Record<SubstitutionSetting, string> = {
+  allow_any: "Any brand",
+  no_store_brand: "No own-brand",
+  exact_only: "Exact item",
+};
+
+interface ListItemProps {
+  item: ShoppingListItem;
+  onCheck: (checked: boolean) => void;
+  onSubstitution: (setting: SubstitutionSetting) => void;
+  onRemove: () => void;
+}
+
+export default function ListItem({ item, onCheck, onSubstitution, onRemove }: ListItemProps) {
+  return (
+    <li className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors ${item.checked ? "bg-gray-50 opacity-60" : "bg-white"}`}>
+      <input
+        type="checkbox"
+        checked={item.checked}
+        onChange={(e) => onCheck(e.target.checked)}
+        className="w-4 h-4 rounded accent-green-600 shrink-0"
+      />
+
+      {item.image && (
+        <Image src={item.image} alt={item.name} width={32} height={32} className="rounded object-contain shrink-0" />
+      )}
+
+      <div className="flex-1 min-w-0">
+        <p className={`text-sm font-medium truncate ${item.checked ? "line-through text-gray-400" : "text-gray-900"}`}>
+          {item.name}
+        </p>
+        <div className="flex items-center gap-1 mt-0.5">
+          {(["allow_any", "no_store_brand", "exact_only"] as SubstitutionSetting[]).map((s) => (
+            <button
+              key={s}
+              onClick={() => onSubstitution(s)}
+              className={`text-xs px-2 py-0.5 rounded-full transition-colors ${
+                item.substitutionSetting === s
+                  ? "bg-green-100 text-green-700 font-medium"
+                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+              }`}
+            >
+              {SUBSTITUTION_LABELS[s]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button onClick={onRemove} className="shrink-0 text-gray-400 hover:text-red-500 transition-colors p-1">
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </li>
+  );
+}
