@@ -7,8 +7,16 @@ purpose_statement: >
   so they stop making fragmented price decisions across memory, offers apps, and
   in-store impulse checks.
 
+target_audience_note: >
+  Urban or suburban households with 2+ major supermarkets within
+  reasonable reach (Kiwi, REMA 1000, Coop, Meny etc.). Explicitly
+  out of scope for v1: rural users with single-store access, and
+  shoppers who prioritise convenience or loyalty cards over price.
+  These users won't benefit from comparison — the app is for people
+  who have genuine choice and are motivated to use it.
+
 jtbd:
-  - user_type: "Household shopper (individual or couple)"
+  - user_type: "Urban household shopper (individual or couple) with multiple store options"
     functional: >
       Build a weekly shopping list and know at planning time which store (Kiwi,
       Rema 1000, Coop, etc.) offers the cheapest total basket for those exact items.
@@ -18,13 +26,67 @@ jtbd:
       Want substitution suggestions for commodity items but want full control
       to say "not this one" — the app should make saving easier, not override
       choices.
-    social: ""
+    social: >
+      Share the mental load of grocery planning with a partner. Both people
+      can see and contribute to the same list, know what the other person
+      added, and mark items off in the shop so nobody doubles up or misses
+      something. The "where should we shop this week?" decision becomes a
+      shared, visible answer rather than whoever did the mental arithmetic
+      first. Note: real-time sync (simultaneous live updates) is a v2 feature —
+      v1 is a shared list that both partners can read and update, without
+      requiring live push.
     validated: true
     source_class: external_human
     validation_note: >
       5 interviews (2026-05-15): wife, wife's sister + partner, 2 friends/family.
       All confirmed commodity substitutions welcome; all confirmed brand-specific
       items should not be substituted. Per-item control is the design requirement.
+
+ux_experience_vision: >
+  Sunday afternoon. You open the app and add this week's items in a couple
+  of minutes — scan a few things from the fridge, search for the rest. The
+  basket summary updates as you go: REMA 1000 comes out cheapest by 120kr.
+  You and your wife are both on the same list; she adds two things you forgot.
+  You both leave for the shop knowing exactly where you're going and roughly
+  what it'll cost.
+  In the store, you work through the list and check items off as they go into
+  the basket. You come home having spent what you expected to spend — and
+  over the month, the consistent store choices add up to 400-600kr in savings
+  compared to picking stores by habit. You never once had to hold a price in
+  your head.
+
+expected_savings:
+  per_shop_kr: "80-200"
+  per_month_kr: "320-800"
+  basket_size: "40-50 items"
+  basis: >
+    Comparison between Coop and REMA 1000 / Kiwi on a typical weekly shop
+    without promotional offers factored in. Real savings will vary by product
+    mix. Promotional pricing could increase savings further.
+  note: >
+    This is a meaningful outcome — 320-800kr/month is material for most
+    households. The app's success metric should track whether users who
+    follow the cheapest-store recommendation actually achieve savings in
+    this range.
+
+loyalty_cards:
+  status: "in scope — loyalty cards do not override price comparison"
+  finding: >
+    Target users hold loyalty cards for Kiwi, REMA 1000, and Coop.
+    Cards are not a barrier (sign-up is phone number only) and do not
+    lock users to a single store. Benefits are additive perks on top of
+    base pricing: bonus points on specific categories (Kiwi), some
+    gated offers (REMA), and self-scan access (Coop). Coop and Kiwi
+    also return cashback from accumulated points.
+  v1_decision: >
+    Exclude loyalty card benefits from v1 price calculations. Base price
+    comparison is the primary decision driver. Loyalty perks are
+    small, category-specific, and variable — factoring them in would
+    add significant complexity for marginal accuracy gain at this stage.
+  future_scope: >
+    Points/cashback calculation is worth revisiting at v2 — "effective
+    price after loyalty return" could be a meaningful differentiator.
+    Track as a future opportunity in the OST.
 
 workarounds:
   - description: >

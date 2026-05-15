@@ -1,21 +1,35 @@
 # Mycelium active diamonds state
 # Populated by /mycelium:interview on first project-onboarding run.
 # See plugin reference for diamond scales (L0 Purpose -> L5 Market).
-project_type: ""
+project_type: "solo_product"
 dogfood: false
 active_diamonds:
   - id: L0-001
     scale: L0
     name: "Shopping Price Tracker (Norway)"
-    phase: Discover
-    confidence: 0.30
+    phase: Develop
+    confidence: 0.42
     evidence_type: external_human
-    product_type: ""
+    product_type: "software"
     created_via: brief
     theory_gates_status:
-      evidence: pending
-      cynefin: pending
-      bias: pending
+      evidence: pass
+      cynefin: pass
+      bias: pass
       bvssh: pending
-      corrections: pending
-last_updated: "2026-05-15"
+      corrections: pass
+    cynefin_classification:
+      domain: complicated
+      notes: "Core problem (price comparison) is Complicated — expert analysis, knowable cause-effect. Substitution behavior is Complex — at-001 probe run as appropriate method."
+    phase_history:
+      - phase: Discover
+        entered: "2026-05-15"
+        exited: "2026-05-16"
+        confidence_at_exit: 0.35
+        notes: "5 interviews, Kassal API spike, assumption test at-001 validated. Scope narrowed to urban households."
+      - phase: Define
+        entered: "2026-05-16"
+        exited: "2026-05-16"
+        confidence_at_exit: 0.42
+        notes: "Social JTBD filled. UX vision written. Savings calibrated (320-800kr/month). Loyalty card scope resolved (in scope as users, out of scope as calculation input for v1). Cynefin: Complicated + Complex element."
+last_updated: "2026-05-16"

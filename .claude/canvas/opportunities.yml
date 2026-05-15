@@ -468,3 +468,39 @@ solutions:
       dimension: usability
       assumption: "Shoppers can find the product they want despite no fuzzy search — either they spell correctly or the UI helps them recover."
       test: "Usability test: ask 5 users to find 3 products by name. Observe failure modes. Measure recovery rate with empty-state guidance."
+
+bias_checks:
+  - date: "2026-05-16"
+    stage: L0
+    activity: "Pre-Discover→Define progression"
+    active_risks:
+      - bias: "Confirmation bias / Social desirability"
+        risk_level: MEDIUM
+        evidence: "All 5 interviews are close social connections. Revised down from HIGH: target user is explicitly urban households with real store choice — that IS the founder's household context. Sample is representative of intended v1 audience."
+        mitigation: "Interviewees surfaced unprompted disagreement (dietary filtering, brand preferences, no-store-brand flag). Social desirability risk remains — watch for over-agreement in future interviews."
+      - bias: "WYSIATI (What You See Is All There Is)"
+        risk_level: MEDIUM
+        evidence: "Sample is urban, which matches the target audience. Rural and elderly users are explicitly out of scope. Residual gap: loyalty-card users (REMA Æ, Coop Extrabonus) may not benefit from comparison if their card savings already lock them to one store."
+        mitigation: "Open question to carry forward: do loyalty-card-first shoppers still price-compare? If not, they are a second out-of-scope cohort. Worth one interview to confirm boundary."
+      - bias: "Anchoring"
+        risk_level: MEDIUM
+        evidence: "Initial purpose framing from founder's own experience set the direction. Interviews explored that framing rather than starting fresh."
+        mitigation: "OST captures deprioritised opportunities (opp-003, opp-007, opp-008) — breadth is present. Evidence of going beyond the initial frame."
+      - bias: "Optimism bias"
+        risk_level: MEDIUM
+        evidence: "No pre-mortem conducted. 'Save money without mental effort' is a high promise. Rate limits, no fuzzy search, and allergen liability are real constraints."
+        mitigation: "Constraints documented in purpose.yml. Run pre-mortem before Define→Develop."
+      - bias: "Bandwagon effect"
+        risk_level: LOW
+        evidence: "Price comparison apps exist (Prisjakt etc.) but this is tied specifically to the Kassal API and Norwegian grocery context."
+        mitigation: "N/A — approach is grounded in specific API availability, not trend-following."
+      - bias: "Status quo bias"
+        risk_level: LOW
+        evidence: "Fresh project with no legacy purpose to defend."
+        mitigation: "N/A."
+    agent_self_check:
+      sycophancy: "CAUTION — built substantially on founder's framing throughout discovery. Devil's advocate sections added as mitigation."
+      recency: "OK — evidence is in canvas files, not just recent conversation."
+      pattern_matching: "OK — Kassal API constraints are project-specific, not generic CRUD-app pattern."
+      completionism: "OK — social JTBD dimension left empty rather than speculated."
+    verdict: "YES WITH CAUTION — proceed to Define but commit to widening the interview sample before Define→Develop."
