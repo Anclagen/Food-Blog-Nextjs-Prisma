@@ -1,37 +1,34 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Dependencies
+node_modules/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Next.js
+web/.next/
+web/out/
+web/next-env.d.ts
 
-# testing
-/coverage
+# Express build output
+server/dist/
 
-# next.js
-/.next/
-/out/
+# Environment files
+.env
+.env.local
+.env*.local
+server/.env
+web/.env.local
 
-# production
-/build
-
-# misc
+# Misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
-.env
+# TypeScript
+*.tsbuildinfo
 
-# vercel
+# Vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Claude Code local settings (keep canvas/memory/harness)
+.claude/settings.local.json

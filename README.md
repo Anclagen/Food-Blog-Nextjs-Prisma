@@ -1,38 +1,78 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Kassalapp — Shopping Price Tracker
 
-## Getting Started
+Find the cheapest Norwegian supermarket for your weekly shop. Add items by search or barcode scan, compare basket totals across Kiwi, Rema 1000, Coop, and more — powered by the [Kassal API](https://kassal.app).
 
-First, run the development server:
+## Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+```
+server/   Express API — products, shopping lists, auth
+web/      Next.js 14 frontend (App Router)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+| Layer | Tech |
+|---|---|
+| API | Node.js · Express · TypeScript |
+| ORM | Sequelize |
+| Database | PostgreSQL |
+| Frontend | Next.js 14 (App Router) · React 18 · TypeScript |
+| Styling | Tailwind CSS |
+| Price data | Kassal API |
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Getting started
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### 1. API server
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+cd server
+cp .env.example .env       # fill in DATABASE_URL, KASSAL_API_KEY, JWT_SECRET
+npm install
+npm run db:sync            # create tables
+npm run dev                # http://localhost:3001
+```
 
-## Learn More
+### 2. Frontend
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+cd web
+cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:3001
+npm install
+npm run dev                         # http://localhost:3000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API reference
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Create account |
+| POST | `/api/auth/login` | Sign in, returns JWT |
+| GET | `/api/products/search?q=` | Search products (min 3 chars) |
+| GET | `/api/products/ean/:ean` | Lookup by barcode, returns all store prices |
+| POST | `/api/products/bulk-prices` | Basket price comparison (up to 100 EANs) |
+| GET | `/api/lists` | Get all lists for current user |
+| POST | `/api/lists` | Create list |
+| DELETE | `/api/lists/:id` | Delete list |
+| POST | `/api/lists/:id/items` | Add item |
+| PATCH | `/api/lists/:id/items/:itemId` | Update item (checked, substitutionSetting, quantity) |
+| DELETE | `/api/lists/:id/items/:itemId` | Remove item |
 
-## Deploy on Vercel
+All routes except auth require `Authorization: Bearer <token>`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment variables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+**`server/.env`**
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `KASSAL_API_KEY` | API key from kassal.app |
+| `JWT_SECRET` | Secret for signing JWTs (any random string) |
+| `PORT` | API port (default: 3001) |
+| `CORS_ORIGIN` | Allowed frontend origin (default: http://localhost:3000) |
+
+**`web/.env.local`**
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | URL of the Express API (default: http://localhost:3001) |
