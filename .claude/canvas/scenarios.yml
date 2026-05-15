@@ -1,0 +1,64 @@
+# Scenarios canvas
+# Source: Extracted from research evidence — brief + 5 interviews (2026-05-15)
+# Format: Hoskins (persona, means, motive, simulation)
+# Rule: Scenarios must emerge from interview stories, not be invented.
+
+scenarios:
+
+  - id: sc-001
+    name: "Saturday morning list building"
+    opportunities: [opp-001, opp-004, opp-005]
+    persona: "A couple doing their weekly household shop in Norway"
+    means: "Phone, mental price memory, separate offers booklet app"
+    motive: >
+      Save money — know Rema 1000 is generally cheaper but Coop has
+      offers this week. Want to make one good store decision, not review
+      every item across every store.
+    simulation: >
+      Saturday morning. Building the list: milk, eggs, pasta, coffee,
+      cleaning spray. They know Rema is usually cheaper for basics but
+      the offers app shows Coop has pasta discounted this week. They open
+      the app to check — it shows the weekly leaflet but can't add items
+      to a list or calculate which store is cheaper overall. They close the
+      app, decide to go to Rema, and assume the pasta saving probably
+      won't outweigh the general Rema price advantage. They might be right.
+      They don't know.
+    evidence_source: "Brief Q2 + purpose.yml workarounds"
+    validated: true
+    source_class: external_human
+
+  - id: sc-002
+    name: "In-aisle substitution decision"
+    opportunities: [opp-002, opp-006, opp-008]
+    persona: "Wife, household shopper"
+    means: "In-store visual comparison, label reading"
+    motive: >
+      Save on commodity items (milk, eggs) without compromising on
+      taste or quality items (coffee). The app should make saving easier,
+      not override choices she's already made.
+    simulation: >
+      At Rema. Reaches the dairy aisle. Picks up own-brand eggs next to
+      the named brand — 30% cheaper. Puts own-brand in the basket without
+      hesitation. Moves to coffee. Sees Rema own-brand coffee, 40% cheaper.
+      Pauses. Decides not to — tastes different, not worth the saving.
+      Makes the same decision this week as last week, and the week before.
+      No system remembers it for her.
+    evidence_source: "at-001 P1 + purpose.yml JTBD emotional"
+    validated: true
+    source_class: external_human
+
+  - id: sc-003
+    name: "Unsuitable substitution suggestion"
+    opportunities: [opp-007]
+    persona: "Household member with a dietary restriction (e.g. gluten intolerance)"
+    means: "App substitution suggestion, in-store label checking"
+    motive: "Save money on pasta but must avoid gluten — the saving is worthless if the product is unsafe."
+    simulation: >
+      Building the weekly list. Adds pasta. App suggests a cheaper own-brand
+      pasta at Kiwi — 35% saving. Taps to review. It's regular wheat pasta.
+      No allergy filter was set. Dismisses the suggestion. Adds the
+      gluten-free pasta manually. The app made noise; it didn't help.
+    evidence_source: "at-001 P4+P5 (dietary needs raised unprompted)"
+    validated: false
+    source_class: external_human
+    validation_note: "2/5 interviews — scenario is directional, not fully validated."

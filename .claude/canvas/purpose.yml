@@ -1,0 +1,73 @@
+# Purpose canvas
+# Source: /mycelium:interview brief — internal_stakeholder, not yet validated
+
+purpose_statement: >
+  Help household shoppers plan their weekly grocery list and find the cheapest
+  store to buy each item, using real Norwegian supermarket price data (Kassal API),
+  so they stop making fragmented price decisions across memory, offers apps, and
+  in-store impulse checks.
+
+jtbd:
+  - user_type: "Household shopper (individual or couple)"
+    functional: >
+      Build a weekly shopping list and know at planning time which store (Kiwi,
+      Rema 1000, Coop, etc.) offers the cheapest total basket for those exact items.
+    emotional: >
+      Feel in control of the grocery budget without the cognitive load of
+      remembering prices, comparing booklets, or second-guessing in the aisle.
+      Want substitution suggestions for commodity items but want full control
+      to say "not this one" — the app should make saving easier, not override
+      choices.
+    social: ""
+    validated: true
+    source_class: external_human
+    validation_note: >
+      5 interviews (2026-05-15): wife, wife's sister + partner, 2 friends/family.
+      All confirmed commodity substitutions welcome; all confirmed brand-specific
+      items should not be substituted. Per-item control is the design requirement.
+
+workarounds:
+  - description: >
+      Mental price memory — trying to recall which store is generally cheaper
+      for staple items, revised ad-hoc when a sale is spotted in-store.
+    source_class: internal_stakeholder
+    validated: false
+  - description: >
+      Separate offers-booklet app — shows weekly promotional leaflets from
+      supermarkets; requires manual cross-referencing with the shopping list.
+    source_class: internal_stakeholder
+    validated: false
+
+constraints:
+  technical:
+    - description: "Kassal API is the primary data source for Norwegian supermarket prices. EAN is the primary key."
+      source_class: internal_stakeholder
+    - description: >
+        Kassal API free tier: 60 requests/min. A 20-item list = 20 requests.
+        Caching and request batching are required before any multi-user load.
+        Upgrade path exists (paid key) but adds cost.
+      source_class: internal_desk
+      validated: true
+      evidence: "Kassal API spike (2026-05-15)"
+    - description: >
+        Kassal API text search has no fuzzy matching. Misspellings return no
+        results. Client-side fuzzy layer (e.g. Fuse.js) or UX fallback required.
+      source_class: internal_desk
+      validated: true
+      evidence: "Kassal API spike (2026-05-15)"
+    - description: >
+        Kassal API returns allergen lists per product but full catalogue
+        coverage is unknown. Allergy-filtering feature must include a
+        disclaimer and not be positioned as medical advice.
+      source_class: internal_desk
+      validated: true
+      evidence: "Kassal API spike (2026-05-15)"
+    - description: >
+        Kassal API returns unit price history per store — enables
+        'usually cheaper at X' features beyond current price comparisons.
+        Worth revisiting at L2+ when north star metrics are defined.
+      source_class: internal_desk
+      validated: true
+      evidence: "Kassal API spike (2026-05-15)"
+  political: []
+  regulatory: []

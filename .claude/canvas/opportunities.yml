@@ -1,0 +1,470 @@
+# Opportunity Solution Tree
+# Source: /mycelium:ost-builder — brief + 5 interviews (2026-05-15)
+# Desired outcome: Household shoppers spend less on their weekly grocery shop
+#                  without increasing planning time or mental effort.
+
+desired_outcome: >
+  Household shoppers spend less on their weekly grocery shop without
+  increasing the time or mental effort they invest in planning.
+outcome_metric: "Weekly grocery spend per household"
+evidence_baseline: "5 interviews (2026-05-15) + brief"
+
+opportunities:
+
+  - id: opp-001
+    statement: >
+      Shoppers can't quickly find which store has their exact shopping
+      list at the lowest total cost.
+    parent: null
+    evidence:
+      - "purpose.yml JTBD functional — workarounds: mental price memory + separate offers app"
+      - "5/5 interview participants described splitting attention across stores"
+    cynefin: complicated
+    validated: true
+    source_class: external_human
+    children: [opp-004, opp-005]
+
+  - id: opp-002
+    statement: >
+      Shoppers miss savings from cheaper equivalent products because
+      finding and verifying alternatives is too effortful to do routinely.
+    parent: null
+    evidence:
+      - "at-001: 5/5 participants confirmed commodity substitutions wanted"
+      - "at-001: all 5 noted brand-specific items should NOT be substituted"
+    cynefin: complex
+    validated: true
+    source_class: external_human
+    children: [opp-006, opp-007, opp-008]
+
+  - id: opp-003
+    statement: >
+      Shoppers can't tell if they're getting good value per unit when
+      products come in different sizes or quantities.
+    parent: null
+    evidence:
+      - "at-001 P4+P5 — unit price comparisons mentioned unprompted (2/5 interviews)"
+    cynefin: complicated
+    validated: false
+    source_class: external_human
+    validation_note: "Directional signal only — 2/5 participants. Needs more validation."
+    children: []
+
+  - id: opp-004
+    statement: >
+      Shoppers have no single place to see prices for their list items
+      across multiple stores.
+    parent: opp-001
+    evidence:
+      - "purpose.yml workaround: separate offers-booklet app used for manual cross-referencing"
+      - "5/5 interviews described checking different stores mentally or via booklet app"
+    cynefin: complicated
+    validated: true
+    source_class: external_human
+    children: []
+
+  - id: opp-005
+    statement: >
+      Shoppers can't see their total basket cost at each store to decide
+      where to do the whole shop.
+    parent: opp-001
+    evidence:
+      - "purpose.yml JTBD functional — deciding which store to visit is the core job"
+      - "5/5 interviews: store decision currently made by incomplete mental model"
+    cynefin: complicated
+    validated: true
+    source_class: external_human
+    children: []
+
+  - id: opp-006
+    statement: >
+      Shoppers need per-item substitution control — commodity items should
+      allow alternatives, brand-specific items should not.
+    parent: opp-002
+    evidence:
+      - "at-001 P1: per-item toggle explicitly requested"
+      - "at-001 P2+P3: 'no store brand' flag requested as finer-grained control"
+    cynefin: complicated
+    validated: true
+    source_class: external_human
+    children: []
+
+  - id: opp-007
+    statement: >
+      Shoppers with dietary requirements risk receiving substitution
+      suggestions that are unsuitable for their needs.
+    parent: opp-002
+    evidence:
+      - "at-001 P4+P5: dietary/allergy filtering raised unprompted (2/5 interviews)"
+    cynefin: complicated
+    validated: false
+    source_class: external_human
+    validation_note: "Directional signal — 2/5 participants. Also high feasibility risk (API coverage unknown)."
+    children: []
+
+  - id: opp-008
+    statement: >
+      Shoppers make the same brand preference decisions repeatedly because
+      the system has no memory of their choices.
+    parent: opp-002
+    evidence:
+      - "at-001 P4+P5: preferred brands / disliked brands mentioned (2/5 interviews)"
+      - "purpose.yml workaround: mental memory used to track price and preference"
+    cynefin: complicated
+    validated: false
+    source_class: external_human
+    validation_note: "Directional signal — 2/5 participants."
+    children: []
+
+solutions:
+
+  - id: sol-001
+    opportunity: opp-004
+    name: "Per-item price lookup across stores (Kassal API)"
+    description: >
+      For each item on the shopping list, query Kassal API and display
+      the price at each available store.
+    hypothesis: >
+      We believe shoppers will know which store to buy each item from
+      if we show real-time per-item prices across stores when they
+      build their list.
+    priority: high
+    four_risks:
+      value:
+        assessment: "High confidence — confirmed by 5/5 interviews as the core desired outcome."
+        evidence: "at-001 + purpose.yml"
+        validated: true
+      usability:
+        assessment: "Medium risk — per-item price table may feel overwhelming on long lists."
+        evidence: "No usability test yet."
+        validated: false
+      feasibility:
+        assessment: >
+          ✅ Confirmed. Kassal API returns price data per store per product.
+          Constraint: 60 req/min on free tier — a 20-item list = 20 requests.
+          Caching and request batching required before any multi-user load.
+        evidence: "Kassal API spike (2026-05-15) — internal_desk"
+        validated: true
+      viability:
+        assessment: "Low risk — no monetisation or regulatory concerns at this stage."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: usability
+      assumption: "Per-item price table is readable and useful when lists exceed 10 items."
+      test: "Usability test with a 15-item list prototype — does the price view help or overwhelm?"
+
+  - id: sol-002
+    opportunity: opp-005
+    name: "Cheapest total basket summary by store"
+    description: >
+      Show a single total basket cost per store so the shopper can
+      choose where to do the whole weekly shop in one decision.
+    hypothesis: >
+      We believe shoppers will choose the cheapest store for their weekly
+      shop if we show them a single total basket cost per store.
+    priority: high
+    four_risks:
+      value:
+        assessment: "High confidence — 5/5 interviews confirm this is the core job."
+        evidence: "purpose.yml JTBD functional + at-001"
+        validated: true
+      usability:
+        assessment: "Low risk — one number per store is the simplest possible UI."
+        evidence: "Internal assessment."
+        validated: false
+      feasibility:
+        assessment: >
+          ✅ Confirmed — aggregation is trivial once per-item prices exist.
+          Same rate-limit constraint as sol-001 applies.
+        evidence: "Kassal API spike (2026-05-15) — internal_desk"
+        validated: true
+      viability:
+        assessment: "Low risk."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: usability
+      assumption: "Shoppers will act on the cheapest-store recommendation rather than defaulting to habit."
+      test: "Post-launch: track whether users change their stated store choice after seeing basket totals."
+
+  - id: sol-003
+    opportunity: opp-005
+    name: "Split-store optimisation (cheapest item per store)"
+    description: >
+      For shoppers willing to visit multiple stores, show which items to
+      buy at each store for maximum total savings.
+    hypothesis: >
+      We believe multi-store shoppers will reduce their total spend if
+      we show an optimised split-store plan.
+    priority: deprioritise
+    priority_note: "No evidence anyone wants to split stores. No interview participant mentioned it."
+    four_risks:
+      value:
+        assessment: "Low — no mention across 5 interviews. Research suggests one-store decision is the real job."
+        evidence: "Absence of evidence in all 5 interviews."
+        validated: false
+      usability:
+        assessment: "Low risk if built, but high complexity for unclear value."
+        evidence: "Internal assessment."
+        validated: false
+      feasibility:
+        assessment: "Medium — requires route/trip planning logic on top of price data."
+        evidence: "Internal assessment."
+        validated: false
+      viability:
+        assessment: "Low risk but questionable ROI."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: value
+      assumption: "Shoppers are willing to visit more than one store per week to save money."
+      test: "Add to next interview round: 'Would you visit 2 stores in the same trip to save 20%?'"
+
+  - id: sol-004
+    opportunity: opp-006
+    name: "Per-item substitution toggle with 'no store brand' sub-flag"
+    description: >
+      Each list item has a three-state substitution setting: Allow any /
+      No store brand / Exact item only. Defaults to 'Allow any' for
+      commodity categories (dairy, eggs, meat, cleaning products).
+    hypothesis: >
+      We believe shoppers will accept more substitutions — and save more —
+      if we give them per-item control rather than a global on/off toggle.
+    priority: medium
+    priority_note: "Build after sol-001 and sol-002 are validated. Evidence is strong but depends on core feature first."
+    four_risks:
+      value:
+        assessment: "High — all 5 interview participants described this need explicitly."
+        evidence: "at-001: P1 (per-item toggle), P2+P3 ('no store brand' flag)"
+        validated: true
+      usability:
+        assessment: "Medium risk — three-state toggle per item may be cognitively heavy on long lists."
+        evidence: "No usability test yet."
+        validated: false
+      feasibility:
+        assessment: >
+          ✅ Confirmed — Kassal API returns brand, category, and vendor data per product.
+          Category data enables sensible commodity defaults.
+        evidence: "Kassal API spike (2026-05-15) — internal_desk"
+        validated: true
+      viability:
+        assessment: "Low risk."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: usability
+      assumption: "Shoppers will set substitution preferences per item without it feeling like too much overhead."
+      test: "Usability test on paper prototype: ask 3 users to set preferences for a 10-item list. Measure time and whether they complete it."
+
+  - id: sol-005
+    opportunity: opp-007
+    name: "Dietary/allergy filter on substitutions"
+    description: >
+      A global dietary profile (gluten-free, dairy-free, nut allergy, etc.)
+      that filters substitution suggestions to exclude unsafe products.
+    hypothesis: >
+      We believe shoppers with dietary requirements will trust substitution
+      suggestions if we filter them against a dietary profile set once.
+    priority: defer
+    priority_note: "Defer until Kassal API allergen data coverage is confirmed. High liability if incomplete."
+    four_risks:
+      value:
+        assessment: "Medium — 2/5 interviews raised it unprompted. Important for that cohort."
+        evidence: "at-001 P4+P5"
+        validated: false
+      usability:
+        assessment: "Low risk — dietary profile setup is a well-known UX pattern."
+        evidence: "Internal assessment."
+        validated: false
+      feasibility:
+        assessment: >
+          ✅ Unblocked — Kassal API returns allergens list per product.
+          Coverage completeness across the full product catalogue still unknown;
+          incomplete data remains a liability risk.
+        evidence: "Kassal API spike (2026-05-15) — internal_desk"
+        validated: true
+      viability:
+        assessment: >
+          Medium risk — allergen features carry liability if API data is incomplete
+          or outdated. Must display a clear disclaimer and link to official product
+          labelling. Do not position as medical advice.
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: viability
+      assumption: "Kassal API allergen data is complete and current enough to rely on for dietary filtering without a liability disclaimer."
+      test: "Spot-check 20 products with known allergens against API data. Draft disclaimer copy before shipping."
+
+  - id: sol-006
+    opportunity: opp-008
+    name: "Preferred / disliked brand settings per category"
+    description: >
+      Shoppers mark brands as preferred or disliked per category
+      (e.g., preferred coffee brand, disliked store-brand yoghurt),
+      persisted across sessions and applied automatically to substitutions.
+    hypothesis: >
+      We believe shoppers will make fewer repeated preference decisions
+      if we remember their brand choices and apply them automatically.
+    priority: low
+    four_risks:
+      value:
+        assessment: "Medium — 2/5 interviews mentioned brand preferences. Directional."
+        evidence: "at-001 P4+P5"
+        validated: false
+      usability:
+        assessment: "Medium — one-time setup cost; payoff requires repeat shopping sessions."
+        evidence: "Internal assessment."
+        validated: false
+      feasibility:
+        assessment: "Low risk — user-generated data stored locally."
+        evidence: "Internal assessment."
+        validated: false
+      viability:
+        assessment: "Low risk."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: value
+      assumption: "Shoppers buy the same items regularly enough that persisting brand preferences saves meaningful effort."
+      test: "Interview question: 'How often do you buy the same items? Do you always get the same brand?'"
+
+  - id: sol-007
+    opportunity: opp-003
+    name: "Unit price display (price per 100g/ml)"
+    description: >
+      Show price per 100g or 100ml alongside package price for all
+      items where weight/volume data is available from Kassal API.
+    hypothesis: >
+      We believe shoppers will choose better-value products if we show
+      unit prices alongside package prices.
+    priority: low
+    priority_note: "Bundle into Kassal API feasibility spike — same data question as sol-005."
+    four_risks:
+      value:
+        assessment: "Low-Medium — 2/5 interviews mentioned it, framed as a nice-to-have."
+        evidence: "at-001 P4+P5 (unprompted)"
+        validated: false
+      usability:
+        assessment: "Low risk — unit pricing is a familiar concept from supermarket shelf labels."
+        evidence: "Internal assessment."
+        validated: false
+      feasibility:
+        assessment: "✅ Confirmed — Kassal API returns weight and unit price history per store per product."
+        evidence: "Kassal API spike (2026-05-15) — internal_desk"
+        validated: true
+      viability:
+        assessment: "Low risk."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: value
+      assumption: "Shoppers find unit price useful enough to act on during list planning (not just a nice-to-have)."
+      test: "Post-launch: observe whether unit price display influences product selection in session recordings."
+
+  - id: opp-009
+    statement: >
+      Shoppers have no quick way to capture a product for their list at
+      the moment they discover they need it — either at home (running low)
+      or in-store (considering an item not on the list).
+    parent: null
+    evidence:
+      - "User: 'scanning can happen in the home and store when checking items they might not have on their list initially'"
+      - "purpose.yml workaround: mental memory used to track items — capture is currently deferred and often forgotten"
+    cynefin: complicated
+    validated: false
+    source_class: internal_stakeholder
+    validation_note: "Described by product owner — not yet validated with external users."
+    children: []
+
+  - id: opp-010
+    statement: >
+      Shoppers can't add products to their list when scanning isn't possible —
+      when planning remotely at home without the physical product, or when
+      a barcode isn't recognised by the database.
+    parent: null
+    evidence:
+      - "User: 'search will happen when scanning fails or perhaps someone is creating a list sitting at home'"
+      - "Scan failure is a predictable gap in any barcode-based system — Kassal DB coverage will not be 100%"
+    cynefin: complicated
+    validated: false
+    source_class: internal_stakeholder
+    validation_note: "Described by product owner — search-as-fallback is logical but frequency of scan failure unknown."
+    children: []
+
+solutions:
+
+  - id: sol-008
+    opportunity: opp-009
+    name: "Barcode scanner with add-to-list and price-check flows"
+    description: >
+      Camera-based barcode scanner with two entry points:
+      (1) Home flow — scan a pantry item, see it matched to Kassal DB, add to list.
+      (2) Store flow — scan a shelf item, immediately see price across stores, add to list if wanted.
+      Both flows share the same scan-and-match engine; the context determines what's shown after.
+    hypothesis: >
+      We believe shoppers will capture items they need more reliably if we let
+      them scan at the moment of discovery — home or in-store — rather than
+      relying on memory to transfer to a list later.
+    priority: high
+    four_risks:
+      value:
+        assessment: "Medium-High — product owner described both use cases explicitly. Not yet externally validated."
+        evidence: "Internal stakeholder (product owner)"
+        validated: false
+      usability:
+        assessment: "Medium risk — camera permission flow + scan UX needs careful handling, especially for older users."
+        evidence: "No usability test yet."
+        validated: false
+      feasibility:
+        assessment: "✅ Confirmed — EAN is the primary key in Kassal API. Barcode lookup is the native query method."
+        evidence: "Kassal API spike (2026-05-15) — internal_desk"
+        validated: true
+      viability:
+        assessment: "Low risk."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: usability
+      assumption: "Camera-based barcode scanning works reliably enough in varied home and store lighting conditions that users won't abandon it."
+      test: "Fishfood: test the scanner (e.g. ZXing/ML Kit) on 20 products in dim kitchen + bright store lighting. Measure success rate."
+
+  - id: sol-009
+    opportunity: opp-010
+    name: "Product text search against Kassal API"
+    description: >
+      Text-based product search (name, brand, category) that queries Kassal API
+      and returns matched products with prices across stores. Used for remote
+      list building and as the fallback when barcode scanning fails or returns
+      no match.
+    hypothesis: >
+      We believe shoppers can build complete lists at home and recover from
+      scan failures if they can search for products by name and add results
+      directly to their list.
+    priority: high
+    priority_note: "Required for both remote list building and scan fallback — effectively a prerequisite for sol-008 to be reliable."
+    four_risks:
+      value:
+        assessment: "High — serves two confirmed needs: home list building (brief Q1) and scan failure recovery."
+        evidence: "Brief Q1 + user description of search use case"
+        validated: false
+      usability:
+        assessment: "Medium risk — search result quality depends on Kassal API query capabilities (fuzzy match, category filters)."
+        evidence: "No usability test yet."
+        validated: false
+      feasibility:
+        assessment: >
+          ⚠️ Partial. Basic and partial-name search works. No fuzzy matching —
+          misspellings return no results. Either implement client-side fuzzy
+          matching (e.g. Fuse.js) over search results, or handle this with
+          UI guidance ("did you mean…") + clear empty-state messaging.
+        evidence: "Kassal API spike (2026-05-15) — internal_desk"
+        validated: true
+      viability:
+        assessment: "Low risk."
+        evidence: "Internal assessment."
+        validated: false
+    riskiest_assumption:
+      dimension: usability
+      assumption: "Shoppers can find the product they want despite no fuzzy search — either they spell correctly or the UI helps them recover."
+      test: "Usability test: ask 5 users to find 3 products by name. Observe failure modes. Measure recovery rate with empty-state guidance."

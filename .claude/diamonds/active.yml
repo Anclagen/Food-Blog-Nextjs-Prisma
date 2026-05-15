@@ -1,0 +1,21 @@
+# Mycelium active diamonds state
+# Populated by /mycelium:interview on first project-onboarding run.
+# See plugin reference for diamond scales (L0 Purpose -> L5 Market).
+project_type: ""
+dogfood: false
+active_diamonds:
+  - id: L0-001
+    scale: L0
+    name: "Shopping Price Tracker (Norway)"
+    phase: Discover
+    confidence: 0.30
+    evidence_type: external_human
+    product_type: ""
+    created_via: brief
+    theory_gates_status:
+      evidence: pending
+      cynefin: pending
+      bias: pending
+      bvssh: pending
+      corrections: pending
+last_updated: "2026-05-15"
