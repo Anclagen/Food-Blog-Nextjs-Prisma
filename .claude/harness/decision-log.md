@@ -146,3 +146,47 @@ Threshold would increase with: broader interview sample, real usage data, observ
 - Loyalty cards: in scope as users, out of scope as v1 calculation input; future opportunity identified
 
 **Child diamonds**: None spawned. L1 Strategy remains optional for solo_product.
+
+---
+
+### Diamond Assessment — 2026-05-25
+
+**Diamond**: L0-001 "Shopping Price Tracker (Norway)"
+**Scale**: L0 Purpose | **Phase**: Develop | **Transition evaluated**: Develop → Deliver
+
+#### Gates (Dev→Del requires: Evidence, Bias, Corrections — BVSSH is Del→Comp only)
+
+| Gate | Status | Notes |
+|------|--------|-------|
+| Evidence | PASS | 5 external_human interviews (2026-05-15) + Kassal API spike + full JTBD in purpose.yml |
+| Bias | PASS | Bias check run 2026-05-16; MEDIUM risks (social desirability, WYSIATI) documented and mitigated |
+| Corrections | PASS | 0 entries in corrections.md |
+| BVSSH | Pending | Required at Del→Comp only — not a blocker at this transition |
+
+#### Confidence
+- Current: 0.42 (Anecdotal)
+- Effective L0 threshold (Del→Comp): 0.765 (base 0.9 × solo_product 0.85)
+- Gap: 0.325 — next milestone is 0.5 (Data-supported), requires direct real-use testing
+
+#### Evidence gaps
+- No real-use validation evidence yet. Develop phase should generate this; broken search has blocked it.
+- Engineering gap: Kassal API fuzzy matching constraint (documented in purpose.yml) not yet solved in implementation.
+- Design gap: UX vision written but no usability testing of actual app.
+
+#### Anti-patterns
+- Process cliff detected: 9 days of unstructured implementation post Define→Develop with no framework check-in.
+- Solution-first creep (marginal, previously noted): search implementation got ahead of working end-to-end loop.
+
+#### Trio coverage
+- Product: Strong (OST comprehensive — 10 opportunities, 9 solutions with Four Risks)
+- Design: Moderate (UX vision present; no usability test of actual app)
+- Engineering: Gap (search broken; known fix not implemented)
+
+#### Human pre-assessment (cognitive forcing, recorded before gates run)
+User said: "can't remember where I left off, search is broken, focus was narrow — one feature rather than a broader plan."
+Assessment comparison: Plan (canvas) is broad; code is narrow — consistent with correct early-stage prioritisation. Broken search traces to documented constraint (no Kassal API fuzzy matching). Context decay after 9 days is real but canvas rebuilds it.
+
+#### Recommendation
+Stay in Develop. Fix search (Fuse.js client-side layer or empty-state fallback). Run first real-use session. Document as at-002. Then run /mycelium:bvssh-check before Dev→Deliver.
+
+**Harness thickness (informational)**: 44 skills, 37 guardrails, 4 mandatory reads, 5 hook layers, 12 gates.

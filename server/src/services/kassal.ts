@@ -96,8 +96,8 @@ export async function searchProducts(query: string, size = 10): Promise<KassalPr
   const params = new URLSearchParams({
     search: query,
     size: String(size),
-    unique: "true",
-    exclude_without_ean: "true",
+    unique: "1",
+    exclude_without_ean: "1",
   });
 
   const data = await kassalFetch<{ data: KassalProduct[] }>(`/products?${params}`);

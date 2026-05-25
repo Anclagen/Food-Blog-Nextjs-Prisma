@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { lists as listsApi, ShoppingListItem, SubstitutionSetting, AddItemPayload } from "@/lib/api";
+import { lists as listsApi, products as productsApi, ShoppingListItem, SubstitutionSetting, AddItemPayload, KassalBulkPriceItem } from "@/lib/api";
 import { isLoggedIn } from "@/lib/auth";
 import ProductSearch from "@/components/ProductSearch";
 import ListItem from "@/components/ListItem";
@@ -15,6 +15,8 @@ export default function ListPage() {
   const [title, setTitle] = useState("");
   const [items, setItems] = useState<ShoppingListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [priceData, setPriceData] = useState<KassalBulkPriceItem[]>([]);
+  const [pricesLoading, setPricesLoading] = useState(false);
 
   const fetchList = useCallback(async () => {
     const { data } = await listsApi.getAll();
@@ -28,6 +30,25 @@ export default function ListPage() {
     if (!isLoggedIn()) { router.replace("/login"); return; }
     fetchList().finally(() => setLoading(false));
   }, [fetchList, router]);
+
+  const eans = items.map((i) => i.ean).filter((e): e is string => !!e);
+
+  const fetchPrices = useCallback(async () => {
+    if (eans.length === 0) { setPriceData([]); return; }
+    setPricesLoading(true);
+    try {
+      const { data } = await productsApi.bulkPrices(eans);
+      setPriceData(data);
+    } catch {
+      // best-effort
+    } finally {
+      setPricesLoading(false);
+    }
+  }, [eans.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    fetchPrices();
+  }, [fetchPrices]);
 
   async function handleAddItem(payload: AddItemPayload) {
     const { data } = await listsApi.addItem(id, payload);
@@ -86,6 +107,7 @@ export default function ListPage() {
                   <ListItem
                     key={item.id}
                     item={item}
+                    cheapestPrice={cheapestFor(item.ean, priceData)}
                     onCheck={(c) => handleCheck(item, c)}
                     onSubstitution={(s) => handleSubstitution(item, s)}
                     onRemove={() => handleRemove(item)}
@@ -114,9 +136,23 @@ export default function ListPage() {
         </div>
 
         <div className="md:sticky md:top-8 self-start">
-          <BasketSummary items={unchecked} />
+          <BasketSummary items={unchecked} priceData={priceData} loading={pricesLoading} onRefresh={fetchPrices} />
         </div>
       </div>
     </div>
   );
+}
+
+function cheapestFor(ean: string | null, priceData: KassalBulkPriceItem[]) {
+  if (!ean) return null;
+  const item = priceData.find((p) => p.ean === ean);
+  if (!item) return null;
+  let best: { price: number; store: string } | null = null;
+  for (const s of item.stores) {
+    const price = Number(s.current_price);
+    if (!isNaN(price) && s.current_price != null && (!best || price < best.price)) {
+      best = { price, store: s.name };
+    }
+  }
+  return best;
 }

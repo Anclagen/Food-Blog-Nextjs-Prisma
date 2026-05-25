@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import Image from "next/image";
 import { products as productsApi, KassalProduct, AddItemPayload } from "@/lib/api";
 
 interface ProductSearchProps {
@@ -80,9 +79,13 @@ export default function ProductSearch({ onAdd }: ProductSearchProps) {
         <ul className="absolute z-10 top-full mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-y-auto">
           {results.map((p) => (
             <li key={p.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50">
-              {p.image && (
-                <Image src={p.image} alt={p.name} width={36} height={36} className="rounded object-contain shrink-0" />
-              )}
+              <div className="w-9 h-9 shrink-0 rounded bg-gray-100 overflow-hidden">
+                {p.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.image} alt="" className="w-full h-full object-contain" loading="lazy"
+                    onError={(e) => { e.currentTarget.hidden = true; }} />
+                )}
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{p.name}</p>
                 <p className="text-xs text-gray-500">

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { ShoppingListItem, SubstitutionSetting } from "@/lib/api";
 
 const SUBSTITUTION_LABELS: Record<SubstitutionSetting, string> = {
@@ -11,12 +10,13 @@ const SUBSTITUTION_LABELS: Record<SubstitutionSetting, string> = {
 
 interface ListItemProps {
   item: ShoppingListItem;
+  cheapestPrice?: { price: number; store: string } | null;
   onCheck: (checked: boolean) => void;
   onSubstitution: (setting: SubstitutionSetting) => void;
   onRemove: () => void;
 }
 
-export default function ListItem({ item, onCheck, onSubstitution, onRemove }: ListItemProps) {
+export default function ListItem({ item, cheapestPrice, onCheck, onSubstitution, onRemove }: ListItemProps) {
   return (
     <li className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors ${item.checked ? "bg-gray-50 opacity-60" : "bg-white"}`}>
       <input
@@ -26,14 +26,24 @@ export default function ListItem({ item, onCheck, onSubstitution, onRemove }: Li
         className="w-4 h-4 rounded accent-green-600 shrink-0"
       />
 
-      {item.image && (
-        <Image src={item.image} alt={item.name} width={32} height={32} className="rounded object-contain shrink-0" />
-      )}
+      <div className="w-8 h-8 shrink-0 rounded bg-gray-100 overflow-hidden">
+        {item.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={item.image} alt="" className="w-full h-full object-contain" loading="lazy"
+            onError={(e) => { e.currentTarget.hidden = true; }} />
+        )}
+      </div>
 
       <div className="flex-1 min-w-0">
         <p className={`text-sm font-medium truncate ${item.checked ? "line-through text-gray-400" : "text-gray-900"}`}>
           {item.name}
         </p>
+        {cheapestPrice && !item.checked && (
+          <p className="text-xs font-medium text-green-700">
+            kr {cheapestPrice.price.toFixed(2)}
+            <span className="font-normal text-gray-400"> · {cheapestPrice.store}</span>
+          </p>
+        )}
         <div className="flex items-center gap-1 mt-0.5">
           {(["allow_any", "no_store_brand", "exact_only"] as SubstitutionSetting[]).map((s) => (
             <button
