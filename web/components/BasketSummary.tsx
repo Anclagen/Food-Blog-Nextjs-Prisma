@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { KassalBulkPriceItem, ShoppingListItem } from "@/lib/api";
 
-const LS_KEY = "kassal_preferred_stores";
+const LS_KEY = "kassal_excluded_stores";
 
 interface StoreTotal {
   store: string;
@@ -19,18 +19,19 @@ interface BasketSummaryProps {
   onRefresh: () => void;
 }
 
-function loadPreferred(): Set<string> | null {
+function loadExcluded(): Set<string> {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (raw === null) return null;
+    if (!raw) return new Set();
     return new Set(JSON.parse(raw) as string[]);
   } catch {
-    return null;
+    return new Set();
   }
 }
 
-function savePreferred(codes: Set<string>) {
-  localStorage.setItem(LS_KEY, JSON.stringify([...codes]));
+function saveExcluded(codes: Set<string>) {
+  if (codes.size === 0) localStorage.removeItem(LS_KEY);
+  else localStorage.setItem(LS_KEY, JSON.stringify([...codes]));
 }
 
 export default function BasketSummary({ items, priceData, loading, onRefresh }: BasketSummaryProps) {
@@ -39,12 +40,12 @@ export default function BasketSummary({ items, priceData, loading, onRefresh }: 
   const allTotals = eans.length > 0 ? computeTotals(priceData, items) : [];
   const allStoreCodes = allTotals.map((s) => ({ store: s.store, name: s.name }));
 
-  const [preferred, setPreferred] = useState<Set<string> | null>(null);
+  const [excluded, setExcluded] = useState<Set<string>>(new Set());
   const [filterOpen, setFilterOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setPreferred(loadPreferred());
+    setExcluded(loadExcluded());
   }, []);
 
   useEffect(() => {
@@ -58,34 +59,30 @@ export default function BasketSummary({ items, priceData, loading, onRefresh }: 
     return () => document.removeEventListener("mousedown", handleClick);
   }, [filterOpen]);
 
-  const storeTotals = preferred && preferred.size > 0
-    ? allTotals.filter((s) => preferred.has(s.store))
+  // New stores from newly added items are automatically visible — not in excluded.
+  const storeTotals = excluded.size > 0
+    ? allTotals.filter((s) => !excluded.has(s.store))
     : allTotals;
 
   function toggleStore(code: string) {
-    const current = preferred ?? new Set(allStoreCodes.map((s) => s.store));
-    const next = new Set(current);
+    const next = new Set(excluded);
     if (next.has(code)) next.delete(code);
     else next.add(code);
-
-    if (next.size === allStoreCodes.length) {
-      setPreferred(null);
-      localStorage.removeItem(LS_KEY);
-    } else {
-      setPreferred(next);
-      savePreferred(next);
-    }
+    setExcluded(next);
+    saveExcluded(next);
   }
 
-  function selectAll() {
-    setPreferred(null);
-    localStorage.removeItem(LS_KEY);
+  function showAll() {
+    const empty = new Set<string>();
+    setExcluded(empty);
+    saveExcluded(empty);
     setFilterOpen(false);
   }
 
   if (eans.length === 0 && unpricedCount === 0) return null;
 
-  const isFiltered = preferred && preferred.size > 0;
+  const hiddenCount = allStoreCodes.filter((s) => excluded.has(s.store)).length;
+  const isFiltered = hiddenCount > 0;
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-4" ref={panelRef}>
@@ -101,7 +98,7 @@ export default function BasketSummary({ items, priceData, loading, onRefresh }: 
                   : "border-gray-200 text-gray-500 hover:border-gray-300"
               }`}
             >
-              {isFiltered ? `${preferred.size} store${preferred.size > 1 ? "s" : ""}` : "Filter stores"}
+              {isFiltered ? `${storeTotals.length} of ${allStoreCodes.length} stores` : "Filter stores"}
             </button>
           )}
           <button
@@ -118,10 +115,10 @@ export default function BasketSummary({ items, priceData, loading, onRefresh }: 
         <div className="mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
           <div className="flex items-center justify-between mb-1">
             <p className="text-xs font-medium text-gray-600">Show stores</p>
-            <button onClick={selectAll} className="text-xs text-green-600 hover:underline">All</button>
+            {isFiltered && <button onClick={showAll} className="text-xs text-green-600 hover:underline">Show all</button>}
           </div>
           {allStoreCodes.map(({ store, name }) => {
-            const checked = !preferred || preferred.has(store);
+            const checked = !excluded.has(store);
             return (
               <label key={store} className="flex items-center gap-2 cursor-pointer">
                 <input
