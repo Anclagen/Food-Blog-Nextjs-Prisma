@@ -17,6 +17,7 @@ export default function ListPage() {
   const [loading, setLoading] = useState(true);
   const [priceData, setPriceData] = useState<KassalBulkPriceItem[]>([]);
   const [pricesLoading, setPricesLoading] = useState(false);
+  const [clearingChecked, setClearingChecked] = useState(false);
 
   const fetchList = useCallback(async () => {
     const { data } = await listsApi.getAll();
@@ -65,9 +66,26 @@ export default function ListPage() {
     setItems((prev) => prev.map((i) => (i.id === item.id ? data : i)));
   }
 
+  async function handleQuantityChange(item: ShoppingListItem, quantity: number) {
+    const { data } = await listsApi.updateItem(id, item.id, { quantity });
+    setItems((prev) => prev.map((i) => (i.id === item.id ? data : i)));
+  }
+
   async function handleRemove(item: ShoppingListItem) {
     await listsApi.removeItem(id, item.id);
     setItems((prev) => prev.filter((i) => i.id !== item.id));
+  }
+
+  async function handleClearChecked() {
+    const checkedItems = items.filter((i) => i.checked);
+    if (checkedItems.length === 0) return;
+    setClearingChecked(true);
+    try {
+      await Promise.all(checkedItems.map((item) => listsApi.removeItem(id, item.id)));
+      setItems((prev) => prev.filter((i) => !i.checked));
+    } finally {
+      setClearingChecked(false);
+    }
   }
 
   if (loading) {
@@ -110,6 +128,7 @@ export default function ListPage() {
                     cheapestPrice={cheapestFor(item.ean, priceData)}
                     onCheck={(c) => handleCheck(item, c)}
                     onSubstitution={(s) => handleSubstitution(item, s)}
+                    onQuantityChange={(q) => handleQuantityChange(item, q)}
                     onRemove={() => handleRemove(item)}
                   />
                 ))}
@@ -117,7 +136,16 @@ export default function ListPage() {
 
               {checked.length > 0 && (
                 <div>
-                  <p className="text-xs text-gray-400 px-1 mb-1">In basket</p>
+                  <div className="flex items-center justify-between px-1 mb-1">
+                    <p className="text-xs text-gray-400">In basket</p>
+                    <button
+                      onClick={handleClearChecked}
+                      disabled={clearingChecked}
+                      className="text-xs text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                    >
+                      {clearingChecked ? "Clearing…" : "Clear all"}
+                    </button>
+                  </div>
                   <ul className="space-y-1">
                     {checked.map((item) => (
                       <ListItem
@@ -125,6 +153,7 @@ export default function ListPage() {
                         item={item}
                         onCheck={(c) => handleCheck(item, c)}
                         onSubstitution={(s) => handleSubstitution(item, s)}
+                        onQuantityChange={(q) => handleQuantityChange(item, q)}
                         onRemove={() => handleRemove(item)}
                       />
                     ))}

@@ -12,6 +12,7 @@ export default function HomePage() {
   const [newTitle, setNewTitle] = useState("");
   const [creating, setCreating] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const user = getStoredUser();
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function HomePage() {
   async function handleDelete(id: string) {
     await listsApi.delete(id);
     setMyLists((prev) => prev.filter((l) => l.id !== id));
+    setConfirmDelete(null);
   }
 
   function handleLogout() {
@@ -96,14 +98,33 @@ export default function HomePage() {
                   {new Date(list.createdAt).toLocaleDateString("en-GB")}
                 </p>
               </Link>
-              <button
-                onClick={() => handleDelete(list.id)}
-                className="ml-3 shrink-0 text-gray-400 hover:text-red-500 transition-colors p-1"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
+
+              {confirmDelete === list.id ? (
+                <div className="flex items-center gap-2 ml-3 shrink-0">
+                  <button
+                    onClick={() => handleDelete(list.id)}
+                    className="text-xs text-red-600 font-medium hover:underline"
+                  >
+                    Delete
+                  </button>
+                  <span className="text-gray-300 select-none">|</span>
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    className="text-xs text-gray-500 hover:underline"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmDelete(list.id)}
+                  className="ml-3 shrink-0 text-gray-400 hover:text-red-500 transition-colors p-1"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
             </li>
           ))}
         </ul>

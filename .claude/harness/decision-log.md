@@ -190,3 +190,58 @@ Assessment comparison: Plan (canvas) is broad; code is narrow — consistent wit
 Stay in Develop. Fix search (Fuse.js client-side layer or empty-state fallback). Run first real-use session. Document as at-002. Then run /mycelium:bvssh-check before Dev→Deliver.
 
 **Harness thickness (informational)**: 44 skills, 37 guardrails, 4 mandatory reads, 5 hook layers, 12 gates.
+
+---
+
+### Diamond Assessment — 2026-05-29
+
+**Diamond**: L0-001 "Shopping Price Tracker (Norway)"
+**Scale**: L0 Purpose | **Phase**: Develop | **Transition evaluated**: Develop → Deliver
+
+#### Gates (Dev→Del requires: Evidence, Bias, Corrections — BVSSH is Del→Comp only)
+
+| Gate | Status | Notes |
+|------|--------|-------|
+| Evidence | PASS | 5 external_human interviews (2026-05-15) + Kassal API spike + full JTBD in purpose.yml |
+| Bias | PASS | Bias check run 2026-05-16; MEDIUM risks documented. No new bias check needed — evidence base unchanged. |
+| Corrections | PASS | 0 entries |
+| BVSSH | Pending | Del→Comp only — not a blocker here |
+
+#### Confidence
+- Current: 0.42 (Anecdotal) — unchanged since 2026-05-16
+- Effective L0 threshold: 0.765 (base 0.9 × solo_product 0.85)
+- Gap: 0.325 — no new evidence to raise it since last assessment
+- What would raise it: one real-use session (at-002), actual savings measured, broader interview sample
+
+#### What's been built (code state 2026-05-29)
+- ProductSearch.tsx: text search with debounce + empty-state ("No results — try a shorter word or check your spelling") ✓
+- BasketSummary.tsx: per-store basket totals ✓
+- ListItem.tsx, lists page, login/register pages ✓
+- Latest commit: "fix search, basket totals, and add per-item prices" (748cb85)
+
+#### Critical gap identified
+Basket total comparison silently breaks when a product is not available at all stores. If missing items are excluded from per-store totals, the cheapest-store recommendation can be actively wrong (store appears cheaper only because items weren't counted). This is a value proposition bug, not a UX polish item.
+
+#### New scope ideas raised by user (not yet in OST)
+- Preferred store selection — logical UX gap, not yet externally validated
+- Split-store optimization — explicitly deprioritized in OST (sol-003: "no evidence in 5 interviews"). User now self-reports going to 1–3 stores — sample of 1 (founder). Needs interview round before reprioritizing.
+- Scraping Kassal data for substitution training data — not in OST; Kassal ToS compatibility unknown; treat as opportunity to investigate, not a build direction
+- Barcode scanner — sol-008, HIGH priority in OST, feasibility confirmed. Usability not tested. Fishfood test needed (scan 20 products in kitchen lighting) before building.
+
+#### Human pre-assessment (cognitive forcing)
+User said: "basic search + add to list working; basket total breaks when items missing from some stores; need store prefs, split lists, barcode, substitutions, maybe scraping."
+Assessment comparison: Identify with OST — search (sol-009) ✓, basket totals (sol-002) ✓, missing-item gap is real and blocks core value. New scope items are solution-layer thinking; need at-002 first to know what actually blocks the job.
+
+#### Anti-patterns
+- Solution-first creep (recurring): user naming 5+ new features before running a single real-use session. Canvas says validate first.
+- Process cliff (again): 4 days of implementation without a framework check-in.
+
+#### Trio coverage
+- Product: Strong (OST comprehensive, four risks per solution)
+- Design: Moderate (UX vision present; actual app never usability tested)
+- Engineering: Present (search fixed, basket totals working; missing-item handling unresolved)
+
+#### Recommendation
+Stay in Develop. Fix missing-item basket handling first. Then run at-002 (first real Sunday shop). Hold new features until real use tells you what actually blocks the job.
+
+**Harness thickness (informational)**: 44 skills, 37 guardrails, 4 mandatory reads, 5 hook layers, 12 gates — unchanged.

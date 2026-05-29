@@ -10,7 +10,6 @@ outcome_metric: "Weekly grocery spend per household"
 evidence_baseline: "5 interviews (2026-05-15) + brief"
 
 opportunities:
-
   - id: opp-001
     statement: >
       Shoppers can't quickly find which store has their exact shopping
@@ -116,8 +115,37 @@ opportunities:
     validation_note: "Directional signal — 2/5 participants."
     children: []
 
-solutions:
+  - id: opp-009
+    statement: >
+      Shoppers have no quick way to capture a product for their list at
+      the moment they discover they need it — either at home (running low)
+      or in-store (considering an item not on the list).
+    parent: null
+    evidence:
+      - "User: 'scanning can happen in the home and store when checking items they might not have on their list initially'"
+      - "purpose.yml workaround: mental memory used to track items — capture is currently deferred and often forgotten"
+    cynefin: complicated
+    validated: false
+    source_class: internal_stakeholder
+    validation_note: "Described by product owner — not yet validated with external users."
+    children: []
 
+  - id: opp-010
+    statement: >
+      Shoppers can't add products to their list when scanning isn't possible —
+      when planning remotely at home without the physical product, or when
+      a barcode isn't recognised by the database.
+    parent: null
+    evidence:
+      - "User: 'search will happen when scanning fails or perhaps someone is creating a list sitting at home'"
+      - "Scan failure is a predictable gap in any barcode-based system — Kassal DB coverage will not be 100%"
+    cynefin: complicated
+    validated: false
+    source_class: internal_stakeholder
+    validation_note: "Described by product owner — search-as-fallback is logical but frequency of scan failure unknown."
+    children: []
+
+solutions:
   - id: sol-001
     opportunity: opp-004
     name: "Per-item price lookup across stores (Kassal API)"
@@ -361,38 +389,6 @@ solutions:
       dimension: value
       assumption: "Shoppers find unit price useful enough to act on during list planning (not just a nice-to-have)."
       test: "Post-launch: observe whether unit price display influences product selection in session recordings."
-
-  - id: opp-009
-    statement: >
-      Shoppers have no quick way to capture a product for their list at
-      the moment they discover they need it — either at home (running low)
-      or in-store (considering an item not on the list).
-    parent: null
-    evidence:
-      - "User: 'scanning can happen in the home and store when checking items they might not have on their list initially'"
-      - "purpose.yml workaround: mental memory used to track items — capture is currently deferred and often forgotten"
-    cynefin: complicated
-    validated: false
-    source_class: internal_stakeholder
-    validation_note: "Described by product owner — not yet validated with external users."
-    children: []
-
-  - id: opp-010
-    statement: >
-      Shoppers can't add products to their list when scanning isn't possible —
-      when planning remotely at home without the physical product, or when
-      a barcode isn't recognised by the database.
-    parent: null
-    evidence:
-      - "User: 'search will happen when scanning fails or perhaps someone is creating a list sitting at home'"
-      - "Scan failure is a predictable gap in any barcode-based system — Kassal DB coverage will not be 100%"
-    cynefin: complicated
-    validated: false
-    source_class: internal_stakeholder
-    validation_note: "Described by product owner — search-as-fallback is logical but frequency of scan failure unknown."
-    children: []
-
-solutions:
 
   - id: sol-008
     opportunity: opp-009
