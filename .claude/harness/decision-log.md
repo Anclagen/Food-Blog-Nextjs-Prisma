@@ -245,3 +245,50 @@ Assessment comparison: Identify with OST — search (sol-009) ✓, basket totals
 Stay in Develop. Fix missing-item basket handling first. Then run at-002 (first real Sunday shop). Hold new features until real use tells you what actually blocks the job.
 
 **Harness thickness (informational)**: 44 skills, 37 guardrails, 4 mandatory reads, 5 hook layers, 12 gates — unchanged.
+
+---
+
+### Diamond Assessment — 2026-05-29 (second assessment, same day)
+
+**Diamond**: L0-001 "Shopping Price Tracker (Norway)"
+**Scale**: L0 Purpose | **Phase**: Develop | **Transition evaluated**: Develop → Deliver
+
+#### Gates (Dev→Del requires: Evidence, Bias, Corrections)
+
+| Gate | Status | Notes |
+|------|--------|-------|
+| Evidence | PASS | Unchanged — 5 external_human interviews + Kassal spike + full JTBD |
+| Bias | PASS | Unchanged — bias-check 2026-05-16 |
+| Corrections | PASS | 0 entries |
+| BVSSH | Pending | Del→Comp only |
+
+#### Confidence
+- Current: 0.42 (Anecdotal) — unchanged; building features does not move confidence
+- Effective threshold: 0.765 (solo_product). Gap: 0.325
+- What would raise it: at-002 (real-use session), second interview round
+
+#### Progress since last assessment (same day)
+All six L0 Develop items completed and committed:
+- Quantity control (+/- UI, basket totals updated)
+- Store filter (excluded model, localStorage — bug fixed: was included model, new stores defaulted to hidden)
+- Clear checked items
+- Silent exclusion warning (EAN-less items)
+- Substitution toggles hidden on checked items
+- Delete list confirmation
+
+#### Human pre-assessment
+User said: "store filtering working; items with no recent price data show nothing — does Kassal provide discontinued filtering?"
+Kassal finding: no discontinued flag. Proxy: current_price: null. No API-side filter available. Client-side filter on search results (current_price !== null) is the lever.
+
+#### Anti-patterns
+- Solution-first creep flagged for the third time. Now a pattern. 13 days since interviews; zero real-use sessions. Each assess cycle adds a new edge case instead of running the shop.
+
+#### Trio coverage
+- Product: Strong
+- Design: Moderate (UX vision exists; zero usability testing of actual app)
+- Engineering: Strong (all six items done, filter bug fixed)
+
+#### Recommendation
+Optional: filter search results on current_price !== null (10-min fix). Then run at-002 — one real Sunday shop. No more features. At-002 is the only path to confidence increase.
+
+**Harness thickness**: 44 skills, 37 guardrails, 4 mandatory reads, 5 hook layers, 12 gates — unchanged.

@@ -24,7 +24,7 @@ export default function ProductSearch({ onAdd }: ProductSearchProps) {
       setSearching(true);
       try {
         const { data } = await productsApi.search(q.trim());
-        setResults(data);
+        setResults(data.filter((p) => p.current_price !== null));
       } catch {
         setResults([]);
       } finally {
